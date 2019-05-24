@@ -624,3 +624,6 @@ MigrationBackup/
 
 # models
 saved_models
+
+# bottleneck
+DogResnet50Data.npz
