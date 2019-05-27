@@ -14548,7 +14548,11 @@ test_{network} = bottleneck_features['test']</code></pre>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Question 5:</strong> Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  Describe why you think the architecture is suitable for the current problem.</p>
-<p><strong>Answer:</strong></p>
+<p><strong>Answer:</strong> 
+We use a similar approach as in <a href="#step4">Step 4</a> but with a different starting algorithm: ResNet-50.</p>
+<p>The model uses the pre-trained ResNet-50 model as a fixed feature extractor, where the last convolutional output of ResNet-50 is fed as input to our model. ResNet50 is a 50 layer Residual Network (see last paragraph as to why residual networks are important [<a href="https://arxiv.org/pdf/1512.03385.pdf">1</a>]), and its detailed architecture can be seen here [<a href="http://ethereon.github.io/netscope/#/gist/db945b393d40bfa26006">2</a>].</p>
+<p>Again, like in step 4, we only add a global average pooling layer and a fully connected layer, where the latter contains one node for each dog category and is equipped with a softmax.</p>
+<p>We chose the ResNet-50 because the ResNet architecture solves the common problem of <em>degredation</em> (e.g. with the network depth increasing, accuracy gets saturated and then degrades rapidly) in deep networks by adding <em>residual blocks</em> where intermediate layers of a block learn a residual function with reference to the block input <a href="https://www.jeremyjordan.me/convnet-architectures/#resnet">[3]</a>.</p>
 
 </div>
 </div>
@@ -14928,6 +14932,31 @@ es/train/024.Bichon_frise
 <h3 id="(IMPLEMENTATION)-Test-Your-Algorithm-on-Sample-Images!">(IMPLEMENTATION) Test Your Algorithm on Sample Images!<a class="anchor-link" href="#(IMPLEMENTATION)-Test-Your-Algorithm-on-Sample-Images!">&#182;</a></h3><p>Test your algorithm at least six images on your computer.  Feel free to use any images you like.  Use at least two human and two dog images.</p>
 <p><strong>Question 6:</strong> Is the output better than you expected :) ?  Or worse :( ?  Provide at least three possible points of improvement for your algorithm.</p>
 <p><strong>Answer:</strong></p>
+<p><em>before testing our algorithm</em></p>
+<p>We anticipate that the algorithm will detect dogs and humans fairly accurately. Here are our predictions:</p>
+<p>"Color-white.jpg" --&gt; will detect no human or dog.
+"michelml.jpg" --&gt; will detect a human and should predict a breed resembling a golden retriever
+"/floyd/input/images/American_water_spaniel_00648.jpg" --&gt; will detect a dog and return American_water_spaniel as breed
+"/floyd/input/images/sample_human_output.png" --&gt; will detect a human and should predict Chinese shar pei as breed
+"/floyd/input/images/Welsh_springer_spaniel_08203.jpg" --&gt; will detect a dog and return Welsh_springer_spaniel as breed
+"/floyd/input/images/Labrador_retriever_06455.jpg" --&gt; will detect a dog and return Labrador_retriever as breed
+"/floyd/input/images/American_water_spaniel_00648.jpg" --&gt; will detect a dog and return American_water_spaniel as breed
+"/floyd/input/images/Brittany_02625.jpg" --&gt; will detect a dog and return Brittany as breed</p>
+<p><em>after testing our algorithm</em></p>
+<p>"Color-white.jpg" --&gt; <strong>success</strong>
+"michelml.jpg" --&gt; <strong>success</strong> (we did not get a golden retriever, but a resembling breed) 
+"/floyd/input/images/American_water_spaniel_00648.jpg" --&gt; <em>failure</em> (we got Irish water spaniel but it was American water spaniel)
+"/floyd/input/images/sample_human_output.png" --&gt; <strong>success</strong> (we did not get a Chinese shar pei, but a resembling breed)
+"/floyd/input/images/Welsh_springer_spaniel_08203.jpg" --&gt; <strong>success</strong>
+"/floyd/input/images/Labrador_retriever_06455.jpg" --&gt; <strong>success</strong>
+"/floyd/input/images/American_water_spaniel_00648.jpg" --&gt; same input as our third image
+"/floyd/input/images/Brittany_02625.jpg" --&gt; <strong>success</strong></p>
+<p>6 of our 7 inputs were accurate, which is equivalent to an accuracy of 86%, more than our initial model accuracy.</p>
+<h5 id="ways-we-could-improve-our-algorithm">ways we could improve our algorithm<a class="anchor-link" href="#ways-we-could-improve-our-algorithm">&#182;</a></h5><ul>
+<li>extending our dataset with additional dog images to improve accuracy  </li>
+<li>labeling our training data with 1) the average weight and 2) the average size of a specific breed to better detect the difference between <a href="https://dogbreedatlas.com/dog-breed-comparison-tool&amp;irish-water-spaniel-vs-american-water-spaniel">similar breed</a>  </li>
+<li>augmenting the number of epoch while fitting the model, which may again improve accuracy, improving the value of the cost function. </li>
+</ul>
 
 </div>
 </div>
